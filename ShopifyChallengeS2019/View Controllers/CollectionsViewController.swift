@@ -12,25 +12,37 @@ import SwiftyJSON
 
 class CollectionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var collections: [Collection] = []
+    // MARK: - Private Properties
     
-    @IBOutlet var collectionsTableView: UITableView!
+    private var collections: [Collection] = []
+    @IBOutlet private var collectionsTableView: UITableView!
+    @IBOutlet private var activityIndicatorView: UIView!
+    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = "Custom Collections"
-        
-        DataFetcher.shared.requestCollectionsData { (collections) in
-            collections?.forEach({ (collectionItem) in
-                self.collections.append(collectionItem)
-                print("\(collectionItem.id) & \(collectionItem.title)")
-            })
-            self.collectionsTableView.reloadData()
-        }
-        
+        fetchCollectionsData()
         collectionsTableView.tableFooterView = UIView()
     }
+    
+    // MARK: - Private Methods
+    
+    private func fetchCollectionsData() {
+        DataFetcher.shared.requestCollectionsData { collections in
+            collections?.forEach({ collectionItem in
+                self.collections.append(collectionItem)
+            })
+            DispatchQueue.main.async {
+                self.collectionsTableView.reloadData()
+                self.activityIndicator.stopAnimating()
+                self.activityIndicatorView.isHidden = true
+            }
+        }
+    }
+    
+    // MARK: - Table View Data Source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return collections.count
@@ -58,7 +70,7 @@ class CollectionsViewController: UIViewController, UITableViewDataSource, UITabl
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let productsViewController = segue.destination as! ProductsViewController
-        productsViewController.collection = sender as! Collection
+        productsViewController.collection = sender as? Collection
     }
 
 }

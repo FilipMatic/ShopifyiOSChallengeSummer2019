@@ -12,9 +12,13 @@ import SwiftyJSON
 struct Collection {
     let id : String
     let title : String
+    let bodyHTML : String
+    let imageURL : String
     
     init(withDictionary collectionDictionary: JSON) {
         self.id = collectionDictionary["id"].stringValue
         self.title = collectionDictionary["title"].stringValue
+        self.bodyHTML = collectionDictionary["body_html"].stringValue
+        self.imageURL = collectionDictionary["image"]["src"].stringValue
     }
 }

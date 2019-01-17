@@ -25,13 +25,9 @@ class DataFetcher {
                 let customCollections = jsonObject["custom_collections"]
                 
                 customCollections.array?.forEach({ collection in
-                    print(collection["title"]) //print the title of each custom collection
-                    print(collection["id"]) //print the ID of each custom collection
-                    
                     let collectionObject = Collection(withDictionary: collection)
                     collections.append(collectionObject)
                 })
-                
                 completion(collections)
                 
             case .failure(let error):
@@ -42,7 +38,7 @@ class DataFetcher {
         
     }
     
-    func requestProductsData(collection: Collection, completion: @escaping(_ productIDs: [String]?) -> Void) {
+    func requestProductIds(collection: Collection, completion: @escaping(_ productIDs: [String]?) -> Void) {
         let collectionId = collection.id
         let productsURL = "https://shopicruit.myshopify.com/admin/collects.json?collection_id=\(collectionId)&page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
         var productIDs : [String] = []
@@ -54,10 +50,8 @@ class DataFetcher {
                 let collects = jsonObject["collects"]
                 
                 collects.array?.forEach({ product in
-                    print(product["product_id"]) //prints ID of each product that's in the collection
                     productIDs.append(product["product_id"].description)
                 })
-                
                 completion(productIDs)
                 
             case .failure(let error):
@@ -86,12 +80,9 @@ class DataFetcher {
                 let productsList = jsonObject["products"]
                 
                 productsList.array?.forEach({ product in
-                    print(product["title"]) //print title of each product listed
-                    
                     let productObject = Product(withDictionary: product)
                     products.append(productObject)
                 })
-                
                 completion(products)
                 
             case .failure(let error):
